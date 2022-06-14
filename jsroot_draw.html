@@ -11,11 +11,10 @@
 </body>
 
 <script type='module'>
-   import { httpRequest, openFile, draw } from 'https://root.cern/js/latest/modules/main.mjs';
-   let filename = await httpRequest("https://root.cern/js/files/hsimple.root", "object");
-   let file = await openFile(filename);
-   let obj = await file.readObject("hpxpy;1");
-   await draw("drawing", obj, "colz");
+  import { openFile, draw } from 'https://root.cern/js/latest/modules/main.mjs';
+  let file = await openFile("https://root.cern/js/files/hsimple.root");
+  let obj = await file.readObject("hpxpy;1");
+  draw("drawing", obj, "colz");
 </script>
 
 </html>
