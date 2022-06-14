@@ -1,0 +1,35 @@
+<html>
+
+<head>
+<title> EOS test
+</title>
+</head>
+
+<body>
+<h1> Test of JSROOT hierarchy browser </h1>
+<div id="simpleGUI" style="top: 0; bottom:0; left: 0; right: 0; position: absolute;"></div>
+</body>
+
+<script type='module'>
+  import { HierarchyPainter } from 'https://root.cern/js/latest/modules/main.mjs';
+
+  let h = new HierarchyPainter("example");
+
+  // suppress selection elements
+  h.no_select = true;
+
+  // let enable scrollbars for hierarchy content, otherwise only HTML resize can be use to see elements
+  h.show_overflow = true;
+
+  // configure 'simple' layout for drawings
+  // one also can specify "grid2x2" or "flex"
+  h.prepareGuiDiv("simpleGUI", "simple");
+
+  // open file and display element
+  await h.createBrowser("fix");
+  await h.openRootFile("https://root.cern/files/lhcb2.root");
+  await h.expandItem("E;1//Event/Gen/Header");
+  h.display("E;1//Event/Gen/Header/m_evtNumber","");
+</script>
+
+</html>
