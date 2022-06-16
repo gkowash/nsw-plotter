@@ -4,8 +4,9 @@
 <head>
     <title>hsimple.root</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <script type="text/javascript" src="/eos/user/s/stgcplot/www/highslide-5.0.0/highslide/highslide-full.js"></script>
-    <link rel="stylesheet" type="text/css" href="/eos/user/s/stgcplot/www/highslide-5.0.0/highslide/highslide.css" />
+    <script type="text/javascript" src="highslide/highslide-full.js"></script>
+    <link rel="stylesheet" type="text/css" href= "highslide-5.0.0/highslide/highslide.css">
+    <link rel="stylesheet" href="style.css">
     <script type="text/javascript">
         //<![CDATA[
         hs.graphicsDir = 'graphics';
@@ -109,12 +110,14 @@
 <body>
 <div id="body">
 
+<div id="nav-placeholder"></div>
+
 <h1>hsimple.root</h1>
 
-<a href="hprof.gif" class="highslide" rel="highslide">
-    <img src="hprof.thumb.gif" alt="hprof" title="hprof"/></a>
-<div class="highslide-heading">
-    <a title="hsimple/hprof">hprof</a>&nbsp;[&nbsp;<a href="hprof.eps">eps</a>&nbsp;|&nbsp;<a href="hprof.gif">gif</a>&nbsp;]
+<a href="graphics/hprof.gif" class="highslide" rel="highslide">
+    <img src="graphics/hprof.thumb.gif" alt="hprof" title="hprof"/></a>
+<div class="highslide-heading"graphics>
+    <a title="hsimple/hprof">hprof</a>&nbsp;[&nbsp;<a href="graphics/hprof.eps">eps</a>&nbsp;|&nbsp;<a href="graphics/hprof.gif">gif</a>&nbsp;]
 </div>
 <div class="highslide-caption">
     <table>
@@ -123,10 +126,10 @@
     </table>
 </div>
 
-<a href="hpx.gif" class="highslide" rel="highslide">
-    <img src="hpx.thumb.gif" alt="hpx" title="hpx"/></a>
+<a href="graphics/hpx.gif" class="highslide" rel="highslide">
+    <img src="graphics/hpx.thumb.gif" alt="hpx" title="hpx"/></a>
 <div class="highslide-heading">
-    <a title="hsimple/hpx">hpx</a>&nbsp;[&nbsp;<a href="hpx.eps">eps</a>&nbsp;|&nbsp;<a href="hpx.gif">gif</a>&nbsp;]
+    <a title="hsimple/hpx">hpx</a>&nbsp;[&nbsp;<a href="graphics/hpx.eps">eps</a>&nbsp;|&nbsp;<a href="graphics/hpx.gif">gif</a>&nbsp;]
 </div>
 <div class="highslide-caption">
     <table>
@@ -135,10 +138,10 @@
     </table>
 </div>
 
-<a href="hpxpy.gif" class="highslide" rel="highslide">
-    <img src="hpxpy.thumb.gif" alt="hpxpy" title="hpxpy"/></a>
+<a href="graphics/hpxpy.gif" class="highslide" rel="highslide">
+    <img src="graphics/hpxpy.thumb.gif" alt="hpxpy" title="hpxpy"/></a>
 <div class="highslide-heading">
-    <a title="hsimple/hpxpy">hpxpy</a>&nbsp;[&nbsp;<a href="hpxpy.eps">eps</a>&nbsp;|&nbsp;<a href="hpxpy.gif">gif</a>&nbsp;]
+    <a title="hsimple/hpxpy">hpxpy</a>&nbsp;[&nbsp;<a href="graphics/hpxpy.eps">eps</a>&nbsp;|&nbsp;<a href="graphics/hpxpy.gif">gif</a>&nbsp;]
 </div>
 <div class="highslide-caption">
     <table>
@@ -154,5 +157,13 @@
     <div class="powered_by">produced with <a href="https://svnweb.cern.ch/trac/penn/browser/reece/rel/root2html/trunk/root2html.py">root2html.py</a></div>
     <div class="valid"><a href="http://validator.w3.org/check?uri=referer">valid xhtml</a></div>
 </div>
+
+<script src="JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
+<script>
+  $(function(){
+    $("#nav-placeholder").load("nav.html");
+  });
+</script>
+
 </body>
 </html>
