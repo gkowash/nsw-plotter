@@ -1,0 +1,53 @@
+<html>
+
+<head>
+  <title>EOS test</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!--<div id="nav-placeholder"></div>-->
+
+  <div class="nav">
+      <a href="index.html">Home</a>
+      <a href="eos_test.html">EOS</a>
+      <a href="plots.html">Plots</a>
+      <a href="test_page.html">Plots 2</a>
+      <a href="jsroot_browser.html">Browser</a>
+      <a href="jsroot_draw.html">Draw</a>
+  </div>
+
+  <h1> Test of using JSROOT via iframe </h1>
+
+  <iframe width=600 height=500 src=“https://jsroot.gsi.de/latest/?nobrowser&file=../files/hsimple.root&item=hpxpy;1&opt=lego2fb”>
+
+  <script src="JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
+  <script>
+    $(function(){
+      $("#nav-placeholder").load("nav.html");
+    });
+  </script>
+
+  <script type="text/javascript">
+    $(function() {
+      // this will get the full URL at the address bar
+      var url = window.location.href;
+
+      // passes on every "a" tag
+      $(".nav a").each(function() {
+        console.log('URL ', url);
+        console.log('THIS', this.href);
+        // checks if its the same on the address bar
+        if (url == (this.href)) {
+          $(this).addClass("active");
+          //$(this).closest("a").addClass("active");
+          //for making parent of submenu active
+          //$(this).closest("li").parent().parent().addClass("active");
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
