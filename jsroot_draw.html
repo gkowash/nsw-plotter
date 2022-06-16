@@ -7,7 +7,15 @@
 </head>
 
 <body>
-  <div id="nav-placeholder"></div>
+  <!--<div id="nav-placeholder"></div>-->
+
+  <div class="nav">
+      <a href="index.html">Home</a>
+      <a href="eos_test.html">EOS</a>
+      <a href="plots.html">Plots</a>
+      <a href="jsroot_browser.html">Browser</a>
+      <a href="jsroot_draw.html">Draw</a>
+  </div>
 
   <h1> Test of JSROOT draw function </h1>
   <div id="drawing" style="width:800px; height:600px"></div>
@@ -24,6 +32,26 @@
 <script>
   $(function(){
     $("#nav-placeholder").load("nav.html");
+  });
+</script>
+
+<script type="text/javascript">
+  $(function() {
+    // this will get the full URL at the address bar
+    var url = window.location.href;
+
+    // passes on every "a" tag
+    $(".nav a").each(function() {
+      console.log('URL ', url);
+      console.log('THIS', this.href);
+      // checks if its the same on the address bar
+      if (url == (this.href)) {
+        $(this).addClass("active");
+        //$(this).closest("a").addClass("active");
+        //for making parent of submenu active
+        //$(this).closest("li").parent().parent().addClass("active");
+      }
+    });
   });
 </script>
 
