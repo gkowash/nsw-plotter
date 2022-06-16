@@ -1,29 +1,29 @@
 /* PERSONAL ADDITIONS */
 
-.menuBar {
-  width: auto;
-  padding: 4px;
-  display: inline-block;
+#nav-placeholder {
   position: sticky;
   top: 10px;
+}
+
+.nav {
+  padding: 4px 4px;
+  display: inline-block;
   background-color: rgb(215,220,230,0.5);
 }
 
-.menuBar li {
-  float: left;
-}
-
-.menuBar a {
+.nav a {
+  padding: 3px 10px;
   font-size: 15px;
   color: rgb(120,120,120);
 }
 
-.menuBar li.active a {
-  color: rgb(200,100,50);
+.nav a.active {
+  background-color: red;
 }
 
-.menuBar a:hover {
+.nav a:hover {
   color: rgb(50,50,50);
+  background-color: rgb(180, 200, 220);
 }
 
 
@@ -32,14 +32,15 @@
 
 /* LIST STYLE */
 /* Remove default bullets */
-ul, #myUL {
+ul, #file-tree {
   list-style-type: none;
 }
 
 /* Remove margins and padding from the parent ul */
-#myUL {
+#file-tree {
   margin: 0;
-  padding: 0;
+  padding: 0 6px;
+  font-size: 18px;
 }
 
 /* Style the caret/arrow */

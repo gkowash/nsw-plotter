@@ -9,11 +9,11 @@
 </head>
 
 <body cz-shortcut-listen="true">
+  <a id="top"></a>
+
   <div id="nav-placeholder"></div>
 
-  <a id="top"></a>
   <h1>Plotting application for New Small Wheel detector</h1>
-  <h1> HELLO, THIS IS A TEST</h1>
 
   <a href="plots.html"> Plots! </a><br>
   <a href="eos_test.html"> EOS test! </a><br>
@@ -21,15 +21,13 @@
   <a href="jsroot_browser.html"> JSROOT browser! </a><br>
   <br>
   <br>
-  <br>
-  <br>
 
-  <ul id="myUL">
+  <ul id="file-tree">
     <li><span class="caret">Category 1</span>
       <ul class="nested">
         <li><a href="jsroot_browser.html">Data 1-1 (JSROOT_browser)</a></li>
         <li><a href="jsroot_draw.html">Data 1-2 (JSROOT_draw)</a></li>
-        <li><a href="#">Data 1-3</a></li>
+        <li><a href="plots.html">Data 1-3 (root2html plots)</a></li>
         <li><span class="caret">Subcategory 1</span>
           <ul class="nested">
             <li><a href="#">Data 1-1-1</a></li>
@@ -115,12 +113,14 @@
       var url = window.location.href;
 
       // passes on every "a" tag
-      $(".menuBar a").each(function() {
+      $(".nav a").each(function() {
         // checks if its the same on the address bar
         if (url == (this.href)) {
-          $(this).closest("li").addClass("active");
+          $(this).addClass("active");
+          console.log('THIS', this)
+          //$(this).closest("a").addClass("active");
           //for making parent of submenu active
-          $(this).closest("li").parent().parent().addClass("active");
+          //$(this).closest("li").parent().parent().addClass("active");
         }
       });
     });
