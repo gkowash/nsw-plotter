@@ -54,17 +54,21 @@ ul, #file-tree {
   user-select: none; /* Prevent text selection */
 }
 
-/* Create the caret/arrow with a unicode, and style it */
+/* Create the caret/folder icon with a unicode, and style it */
 .caret::before {
-  content: "\25B6";
-  color: black;
+  /*content: "\25B6";
+  color: black;*/
+  font-family: "FontAwesome";
+  font-weight: 400;
+  content: "\f07b";
   display: inline-block;
   margin-right: 6px;
 }
 
-/* Rotate the caret/arrow icon when clicked on (using JavaScript) */
+/* Rotate caret or open folder while active */
 .caret-down::before {
-  transform: rotate(90deg);
+  /*transform: rotate(90deg);*/
+  content: "\f07c";
 }
 
 /* Hide the nested list */
