@@ -48,6 +48,21 @@ ul, #file-tree {
   font-size: 18px;
 }
 
+#file-tree-div {
+  overflow-y: scroll;
+  display: inline-block;
+  height: 80vh;
+  width: 15vw;
+}
+
+#simpleGUI {
+  position: absolute;
+  top: 50px;
+  left: 16vw;
+  bottom: 0;
+  right: 0;
+}
+
 /* Style the caret/arrow */
 .caret {
   cursor: pointer;
