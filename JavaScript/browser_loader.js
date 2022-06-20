@@ -1,6 +1,6 @@
 const load_file = function() {
-  h.openRootFile(this.data-file);
-  console.log("Opened file", this.data-file)
+  h.openRootFile(this.dataset.file);
+  console.log("Opened file", this.dataset.file)
 }
 
 var file_links = document.getElementsByClassName("file");

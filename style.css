@@ -33,12 +33,15 @@
 
 
 
-/* COPIED FROM OTHER SOURCES */
-
 /* LIST STYLE */
 /* Remove default bullets */
 ul, #file-tree {
   list-style-type: none;
+}
+
+/* Reduce sub-category indent in file tree */
+li li {
+  margin-left: -30px;
 }
 
 /* Remove margins and padding from the parent ul */
