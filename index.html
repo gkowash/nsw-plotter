@@ -1362,6 +1362,8 @@
     await h.openRootFile("data/NSW-A10-GnamMon_422093.root");
     await h.expandItem("E;1//Event/Gen/Header");
     h.display("E;1//Event/Gen/Header/m_evtNumber","");
+    //make h a global variable (hopefully)
+    window.h = h;
   </script>
 
   <script src="JavaScript/browser_loader.js"></script>
@@ -1372,8 +1374,6 @@
     $(function(){
       $("#nav-placeholder").load("nav.html");
     });
-  //make h a global variable (hopefully)
-  window.h = h;
   </script>
 
   <script type="text/javascript">
