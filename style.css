@@ -77,13 +77,13 @@ li li {
   user-select: none; /* Prevent text selection */
 }
 
-/* Create the caret/folder icon with a unicode, and style it */
+/* Create the caret/folder icon with unicode and style it */
 .caret::before {
-  /*content: "\25B6";
+  /*content: "\25B6"; <--caret icon
   color: black;*/
   font-family: "FontAwesome";
   font-weight: 400;
-  content: "\f07b";
+  content: "\f07b";  /* <--closed folder icon */
   display: inline-block;
   margin-right: 6px;
 }
@@ -91,7 +91,7 @@ li li {
 /* Rotate caret or open folder while active */
 .caret-down::before {
   /*transform: rotate(90deg);*/
-  content: "\f07c";
+  content: "\f07c";  /* <-- open folder icon */
 }
 
 /* Hide the nested list */
