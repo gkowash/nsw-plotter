@@ -24,6 +24,8 @@
 
   <!--h2>Click <a href="plot_pages/slides_A0_run1_L0.html">here</a> for plot page</h2>-->
 
+  <?php include 'dir.php';?>
+
   <div id="file-tree-div">
     <ul id="file-tree">
       <li><a href="plot_pages/slides_A0_run1_L0.html">sample page</a></li>
