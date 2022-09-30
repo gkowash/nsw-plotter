@@ -20,7 +20,7 @@ function drop(ev) {
 var file_links = document.getElementsByClassName("file");
 var i;
 for (i=0; i < file_links.length; i++) {
-  file_links[i].addEventListener("click", load_file);
+  //file_links[i].addEventListener("click", load_file);
   file_links[i].setAtribute("draggable", true);
   file_links[i].setAtribute("ondragstart", drag(event));
 }

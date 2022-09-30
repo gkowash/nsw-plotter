@@ -44,7 +44,9 @@ for sector in sectors:
                     print('Root file: ', rootfile)
                     break
         if rootfile != None:
-            html += '\t'*5 + f'<li><a href="#" class="file" data-file="/stg/{sector}/THRCalib/{run}/{rootfile}">{run}</a></li>\n'
+            name = rootfile[:-5] # Chop off .root extension
+            href = f'"/stg/{sector}/THRCalib/{run}/{name}/{name}.html"'
+            html += '\t'*5 + f'<li><a href="{href}" class="file" data-file="/stg/{sector}/THRCalib/{run}/{rootfile}">{run}</a></li>\n'
         else:
             html += '\t'*5 + f'<li><a href="#">{run} [nd]</a></li>\n'
     html += '\t'*4 + '</ul>\n'
