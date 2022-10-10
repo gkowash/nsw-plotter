@@ -1,16 +1,15 @@
 # Script for automatically creating directory tree for stgc plotting application
 # Creates html file listing directories, which is then inserted into index.html via JQuery
 # Must be positioned in monitor_server folder (or adjust paths accordingly)
-# Probably better to avoid JQuery and do with PHP instead, if possible
+# It would be better to avoid JQuery and do this with PHP instead, but I believe the default NGINX image does not support PHP
 
 import os
 
 paths = []
 
 for root, dirs, files in os.walk('../calibrations/stg'):
-    for name in dirs:
-        #paths.append(os.path.join(root, name))  #Why did I include the root if I just remove it later?
-        paths.append(root + '/' + name)
+    for dir in dirs:
+        paths.append(root + '/' + dir)
         print(paths[-1])
         print("")
 
@@ -35,32 +34,41 @@ for sector in sectors:
 
     for run in runs_per_sector[sector]:
         rootfile = None
+        has_plotpage = False  # Indicates whether root2html_stgc.py has created a plot page for this file yet
         for root, dirs, files in os.walk('../calibrations/stg/'+sector+'/THRCalib/'+run):
             for name in files:
                 # Currently only using summary_plots.root
                 # outputcanvas.root and [...]_pdo_plots.root are also present
                 if 'summary_plots.root' in name:
+                    # Consider adding command line option to specify other file names like pdo_plots (see doc for more details)
                     rootfile = name
-                    print('Root file: ', rootfile)
+                    #print('Root file: ', rootfile)
+                    if name[:-5] in dirs:  # checks for directory created by root2html_stgc.py
+                        has_plotpage = True
                     break
         if rootfile != None:
             name = rootfile[:-5] # Chop off .root extension
-            href = f'"/stg/{sector}/THRCalib/{run}/{name}/{name}.html"'
+            if has_plotpage:
+                href = f'/stg/{sector}/THRCalib/{run}/{name}/{name}.html'
+            else:
+                href = '#'
             html += '\t'*5 + f'<li><a href="{href}" class="file" data-file="/stg/{sector}/THRCalib/{run}/{rootfile}">{run}</a></li>\n'
         else:
             html += '\t'*5 + f'<li><a href="#">{run} [nd]</a></li>\n'
     html += '\t'*4 + '</ul>\n'
     html += '\t'*3 + '</li>\n'
 
-html += '\t\t</ul>\n'
-html += '\t\t<script src="JavaScript/dropdown.js"></script>'
-# ^dropdown.js needs to be executed afer JQuery finishes loads for the menu to function properly
-# Solution: stop using JQuery
+html += """
+\t\t</ul>\n
+\t\t<script src="JavaScript/dropdown.js"></script>
+\t\t<script src="JavaScript/browser_loader.js"></script>
+"""
+# ^dropdown.js and browser_loader.js need to be executed afer JQuery finishes loading to work properly
 
 
 print('\n\n\n')
 print(html)
 
-file = open('filetree.html', 'w')
+file = open('filetree_baseline.html', 'w')  # Modify name for threshold/pdo/tdo
 file.writelines(html)
 file.close()

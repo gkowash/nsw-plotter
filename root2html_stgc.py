@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 """
-Modified from original in June-September 2022 by Griffin Kowash for sTGC plotter project.
-HTML write functions now optionally organize plots into columns by strip, pad, and wire.
-Some minor cosmetic changes have also been made.
+UPDATE DESCRIPTION
+    Modified from original in June-September 2022 by Griffin Kowash for sTGC plotter project.
+    HTML write functions now optionally organize plots into columns by strip, pad, and wire.
+    Some minor cosmetic changes have also been made.
 
-The code has been updated to work with Python 3.
-Funcitonality has only been verified for certain use cases, so the original
-Python 2 version will be more reliable for general purpose use.
+    The code has been updated to work with Python 3.
+    Funcitonality has only been verified for certain use cases, so the original
+    Python 2 version will be more reliable for general purpose use.
 
+    Original description is below.
 
-Original description:
 
 NAME
     root2html.py - generates html and images for displaying TCanvases
@@ -99,7 +100,7 @@ def main(argv):
     ## option defaults
     pattern = ''
     global highslide_path
-    name_html = True  # name HTML output file using rootfile name (originally defaulted to index.html)
+    name_html = True  # assign name to HTML output file using rootfile name (defaults to index.html)
 
     ## parse options
     _short_options = 'hp:j:'
@@ -119,7 +120,7 @@ def main(argv):
         if opt in ('-j', '--highslide'):
             highslide_path = val
 
-    print('  root2html.py  ----------------------------------------------------')
+    print('  root2html_stgc.py  ----------------------------------------------------')
 
     assert len(args) > 0
 
@@ -130,7 +131,7 @@ def main(argv):
     for path in args:
         path_wo_ext = strip_root_ext(path)
         if name_html:
-            name = os.path.join(path_wo_ext, path_wo_ext + '.html')
+            name = os.path.join(path_wo_ext, path_wo_ext.split('/')[-1] + '.html')
         else:
             name = os.path.join(path_wo_ext, 'index.html')
         index = HighSlideRootFileIndex(name)
@@ -166,7 +167,7 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="%(highslide_path)s/highslide-full.js"></script>
     <link rel="stylesheet" type="text/css" href="%(highslide_path)s/highslide.css" />
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="/style.css">
     <script type="text/javascript">
         //<![CDATA[
         hs.graphicsDir = '%(highslide_path)s/graphics/';
