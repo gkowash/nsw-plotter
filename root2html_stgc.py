@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """
+*******
 UPDATE DESCRIPTION
     Modified from original in June-September 2022 by Griffin Kowash for sTGC plotter project.
     HTML write functions now optionally organize plots into columns by strip, pad, and wire.
@@ -10,7 +11,7 @@ UPDATE DESCRIPTION
     Python 2 version will be more reliable for general purpose use.
 
     Original description is below.
-
+*******
 
 NAME
     root2html.py - generates html and images for displaying TCanvases
@@ -77,10 +78,10 @@ import math
 
 import ROOT
 ROOT.gROOT.SetBatch(True)
-try:
-    import rootlogon # your custom ROOT options, comment-out this if you don't have one
-except:
-    print('Could not import rootlogon')
+#try:
+#    import rootlogon # your custom ROOT options, comment-out this if you don't have one
+#except:
+#    print('Could not import rootlogon')
 ROOT.gErrorIgnoreLevel = 1001
 
 path_of_this_file = os.path.abspath( __file__ )
@@ -90,6 +91,7 @@ dir_of_this_file = os.path.dirname(os.path.abspath( __file__ ))
 
 ## global options
 highslide_path = os.path.join(dir_of_this_file, 'highslide-5.0.0/highslide')
+plot_type = 'baseline'  # specifies plot type (baseline, threshold, pdo, tdo) for loading file tree in HTML
 img_format = 'png' # gif or png
 img_height = 450 # pixels
 thumb_height = 120 # pixels
@@ -158,7 +160,7 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
         self.previous_level = 0
         self.pwd = None
     #__________________________________________________________________________
-    def write_head(self, title):
+    def write_head(self, title, mod=True):
         head_template = r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -167,7 +169,7 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script type="text/javascript" src="%(highslide_path)s/highslide-full.js"></script>
     <link rel="stylesheet" type="text/css" href="%(highslide_path)s/highslide.css" />
-    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
     <script type="text/javascript">
         //<![CDATA[
         hs.graphicsDir = '%(highslide_path)s/graphics/';
@@ -273,6 +275,14 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
 <body>
 <div id="body">
 """
+        if mod:  # adds navigation bar for plots-stgc application to top of page
+            head_template += '<div id="nav-placeholder"></div>'
+            head_template += """    <script src="/JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
+    <script>
+        $(function(){
+            $("#nav-placeholder").load("/html/nav.html");
+        });
+    </script><br>"""
         self.write((head_template % {
                 'title' : title,
                 'highslide_path' : self.highslide_path }).encode('utf-8')) # Encode added for Python 3
@@ -331,13 +341,15 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
                     if pattern and not re.match(pattern, root_key_path):
                         continue
                     print(os.path.join(dirpath, key))
-                    if mod:
-                        dir_header = self.write_dir_header(dirpath, mod=True)
-                        strip += dir_header
-                        pad += dir_header
-                        wire += dir_header
-                    else:
-                        self.write_dir_header(dirpath)
+                    # Include following lines if dir_header is desired at the top of each column:
+                    #if mod:
+                    #    dir_header = self.write_dir_header(dirpath, mod=True)
+                    #    strip += dir_header
+                    #    pad += dir_header
+                    #    wire += dir_header
+                    #if not mod:
+                    #    self.write_dir_header(dirpath)
+                    self.write_dir_header(dirpath)  # Remove this line if uncommenting above
                     full_path = os.path.join(self.dirname, root_key_path)
                     if mod:
                         canvas_html = self.write_canvas(obj, full_path, mod=True)
@@ -371,7 +383,7 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
         dirpath = path_split[1]
         dirpath.rstrip('/')
 
-        if mod:
+        if mod:  # Added in case dir header is desired at the top of each column; currently not in use
             header_html = ''
 
         if self.pwd is None:
@@ -664,7 +676,8 @@ def walk(top, topdown=True):
 
 #______________________________________________________________________________
 def convert_eps_to_gif(eps):
-    print('converting eps to gif: ', eps)
+    if not quiet:
+        print('converting eps to gif: ', eps)
     assert eps.endswith('.eps')
     name = eps[:-3] + 'gif'
 #    os.system('convert -resize x%i -antialias -colors 64 -format gif %s %s' % (img_height, eps, name) )
@@ -677,7 +690,8 @@ def convert_eps_to_gif(eps):
 
 #______________________________________________________________________________
 def convert_eps_to_thumb_gif(eps):
-    print('converting eps to thumb gif: ', eps)
+    if not quiet:
+        print('converting eps to thumb gif: ', eps)
     assert eps.endswith('.eps')
     name = eps[:-3] + 'thumb.gif'
 #    os.system('convert -resize x%i -antialias -colors 64 -format gif %s %s' % (thumb_height, eps, name) )
@@ -688,7 +702,8 @@ def convert_eps_to_thumb_gif(eps):
 
 #______________________________________________________________________________
 def convert_eps_to_png(eps):
-    print('converting eps to png: ', eps)
+    if not quiet:
+        print('converting eps to png: ', eps)
     assert eps.endswith('.eps')
     name = eps[:-3] + 'png'
     os.system('convert -resize x%i -antialias -colors 64 -format png %s %s' % (img_height, eps, name) )
@@ -698,7 +713,8 @@ def convert_eps_to_png(eps):
 
 #______________________________________________________________________________
 def convert_eps_to_thumb_png(eps):
-    print('converting eps to thumb png: ', eps)
+    if not quiet:
+        print('converting eps to thumb png: ', eps)
     assert eps.endswith('.eps')
     name = eps[:-3] + 'thumb.png'
     os.system('convert -resize x%i -antialias -colors 64 -format png %s %s' % (thumb_height, eps, name) )
