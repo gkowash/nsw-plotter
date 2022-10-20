@@ -46,8 +46,8 @@ sectors = [path[-1] for path in paths_split if len(path)==4]  # len(path)==4 exc
 
 runs_per_sector = {}
 for sector in sectors:
-    runs_per_sector[sector] = [path[-1] for path in paths_split if sector in path and len(path)==6]  # len(path)==6 selects only the "run[########]" folders
-
+    #runs_per_sector[sector] = [path[-1] for path in paths_split if sector in path and len(path)==6]  # len(path)==6 selects only the "run[########]" folders
+    runs_per_sector[sector] = [path[-1] for path in paths_split if sector in path and 'run' in path[-1]]  # changed from above to exclude folders created for any .root files in THRCalib directories
 
 #print(runs_per_sector)
 
