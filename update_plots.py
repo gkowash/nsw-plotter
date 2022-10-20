@@ -2,10 +2,11 @@
 Description:
 - Generates plots and plot pages for some or all files using root2html_stgc.py
     - Options
-        -a: creates pages for all root files, replacing any already existing ones (maybe create a backup?)
+        -a: creates pages for all root files, replacing any already existing ones
         -n: create pages only for new root files, i.e. without an existing page
-        -f: creates/updates web pages for only the files specified (with paths) after the -f flag
-        -j: specifies highslide path (location of highslide-5.0.0 directory) for root2html_stgc.py
+        -f: creates/updates web pages for only the files specified (with paths) after the -f flag (currently only supports one file per execution)
+        -t: specifies plot type (baseline, threshold, pdo, tdo, all); defaults to baseline
+        -j: specifies highslide path for root2html_stgc.py (include up to /highslide-5.0.0/highslide)
 - Updates html for the file tree that gets loaded into index.html and any other navigation pages
 """
 
@@ -13,23 +14,35 @@ import sys
 import os
 import getopt
 
-mode = 'new'  # Specifies mode used when no argument is provided. Set to 'new' or 'all'
-highslide_path = None
+mode = 'new'  # Default mode (new, all, files)
+plot_type = 'all'  # Default plot type (baseline, threshold, pdo, tdo, all)
+highslide_path = '/highslide'  # Default location on EOS server; set to "/highslide-5.0.0/highslide" for OpenShift server or "None" for .root file directory
+
+# Key phrase unique to file names used for each plot type. (Copy to make_filetree.py if modified)
+# NOTE: current key phrases apart from pdo are preliminary; update when appropriate key phrases for others are determined
+file_key = {
+    'baseline': 'summary_plots.root',
+    'threshold': 'outputcanvas.root',
+    'pdo': 'pdo_plots.root',
+    'tdo': 'summary_plots.root'
+}
 
 def main(argv):
-    short_options = 'anf:j:'
+    global plot_type
+    global mode
+
+    short_options = 'anf:t:j:'
     try:
         opts, args = getopt.gnu_getopt(argv, short_options)
-        print('opts = ', opts)
     except getopt.GetoptError:
-        print('Argument not recognized; choose from -a, -n, -f, or -j. See code for details.\n')
+        print('Argument not recognized; choose from -a, -n, -f, -t, and/or -j. See code for details.\n')
         raise SystemExit
 
     else:
         for opt, val in opts:
             if opt == '-j':
                 global highslide_path
-                highslide_path = val + 'highslide-5.0.0/highslide'
+                highslide_path = val
                 print('Setting highslide path to ', val)
             if opt == '-a':
                 mode = 'all'
@@ -38,91 +51,98 @@ def main(argv):
             elif opt == '-f':
                 mode = 'files'
                 files = val
-                print('Files: ', type(files), files) # for testing
                 if type(files) == str:
-                    files = [files] # make sure format is consistent
+                    files = [files]  # update_files() requires a list of files
+            elif opt == '-t':
+                plot_type = val
+                if plot_type not in ('baseline', 'threshold', 'pdo', 'tdo', 'all'):
+                    print('Plot type not recognized by update_plots.py; choose one of: baseline, threshold, pdo, tdo, all')
+                    raise SystemExit
 
-    if mode == 'all':
-        update_all()
-    elif mode == 'new':
-        update_new()
-    elif mode == 'files':
+    # Update a single file (may support multiple files in the future)
+    # 'files' mode is independent of plot type parameter
+    if mode == 'files':
         update_files(files)
 
-# Old version (save until verified):
-#    if len(sys.argv) > 1:
-#        if sys.argv[1] == '-all':
-#            update_all()
-#        elif sys.argv[1] == '-new':
-#            update_new()
-#        elif sys.argv[1] == '-f':
-#            if len(sys.argv) < 2:
-#                print('"-f" option must be followed by one or more file names.')
-#                raise SystemExit
-#            else:
-#                files = sys.argv[2:]
-##        else:
-#            print('Unrecognized arguments: ', sys.argv[1:])
+    # Update plots and pages for a single plot type
+    elif plot_type != 'all':
+        # Update old and new files
+        if mode == 'all':
+            update_all(plot_type)
+        # Update only new files
+        elif mode == 'new':
+            update_new(plot_type)
 
+    # Update plots and pages for all plot types
+    elif plot_type == 'all':
+        # Update old and new files
+        if mode == 'all':
+            for i, pt in enumerate(file_key.keys()):
+                if i ==0:
+                    update_all(pt)
+                else:
+                    update_all(pt, override=True) # Skip user warning so program can execute without interruption
+        # Update only new files
+        elif mode == 'new':
+            for i, pt in enumerate(file_key.keys()):
+                update_new(pt)
 
-#    elif len(sys.argv) == 1:
-#        if DEFAULT == 'new':type(val)
-#            update_new()
-#        elif DEFAULT == 'all':
-#            update_all()
-#        else:
-#            print('Parameter "DEFAULT" specified in code is not recognized. Confirm that the value is set to either "new" or "all".')
-
-    print('Updating html file tree...')
-    update_filetree()
-    print('\n\n\nUpdate complete.\n')
-
-
-def update_all():
-    # Including two user confirmations to avoid accidentally re-running for every file.
-    # Can be removed if too inconvenient.
-    confirm = input('\nWarning: option -all will execute root2html_stgc.py for every available .root file and will overwrite any previous plot data. Continue? (y/n)')
-    if confirm.lower() != 'y' and confirm.lower() != 'yes':
-        print('Exiting program.')
-        raise SystemExit
+    # Update file tree for navigation pages (baseline.html, threshold.html, pdo.html, tdo.html)
+    print('\n\n\nUpdating html file tree...')
+    if plot_type == 'all' or mode == 'files':
+        for pt in file_key.keys():
+            update_filetree(pt)
     else:
-        rootfiles = []
-        for root, dirs, files in os.walk('../calibrations/stg'):
-            for file in files:
-                if 'summary_plots.root' in file:  # Modify for threshold/pdo/tdo
-                    rootfiles.append(root + '/' + file)
+        update_filetree(plot_type)
+    print('Update complete.\n')
 
-        print('Executing root2html_stgc.py for the following files:')
-        for file in rootfiles:
-            #print('\t' + file.split("/")[-1])
-            #test:
-            print('\t' + file)
-        confirm = input('Press "Enter" to confirm.')
-        if confirm != '':
+
+def update_all(plot_type, override=False):
+    # update_all() includes extra safety check to avoid overwriting files
+    # Can be skipped using override=True
+    if not override:
+        confirm = input('\nWarning: root2html_stgc.py will be executed for every available .root file of the specified plot type and will overwrite previously-generated plots and HTML pages. Continue? (y/n)')
+        if confirm.lower() != 'y' and confirm.lower() != 'yes':
             print('Exiting program.')
             raise SystemExit
-        else:
-            for file in rootfiles:
-                filename = file.split("/")[-1]
-                print(f'\n\n##### {filename} #####\n')
-                update_file(file)
 
-        print('\n\n\n\nPlot updates complete.')
-
-
-def update_new():
     rootfiles = []
     for root, dirs, files in os.walk('../calibrations/stg'):
         for file in files:
-            if 'summary_plots.root' in file:  # Modify for threshold/pdo/tdo
+            if file_key[plot_type] in file:
+                rootfiles.append(root + '/' + file)
+
+    print('\nExecuting root2html_stgc.py for the following files:\n')
+    for file in rootfiles:
+        #print('\t' + file.split("/")[-1])
+        #test:
+        print('\t' + file)
+    confirm = input('\nPress "Enter" to confirm.')
+    if confirm != '':
+        print('Exiting program.')
+        raise SystemExit
+    else:
+        for file in rootfiles:
+            filename = file.split("/")[-1]
+            print(f'\n\n##### {filename} #####\n')
+            update_file(file)
+
+    print('\n\n\n\nPlot updates complete.')
+
+
+def update_new(plot_type):
+    rootfiles = []
+    for root, dirs, files in os.walk('../calibrations/stg'):
+        for file in files:
+            if file_key[plot_type] in file:  # Modify for threshold/pdo/tdo
                 if file[:-5] not in dirs:  # Checks whether a directory has previously been generated by root2html_stgc.py
                     rootfiles.append(root + '/' + file)
 
-    print('Executing root2html_stgc.py for the following files:')
+    print('\nExecuting root2html_stgc.py for the following files:\n')
     for file in rootfiles:
         print('\t' + file.split("/")[-1])
 
-    confirm = input('Press "Enter" to confirm.')
+    confirm = input('\nPress "Enter" to confirm.')
     if confirm != '':
         print('Exiting program.')
         raise SystemExit
@@ -135,26 +155,29 @@ def update_new():
 def update_file(file):
     # Currently does not support root2html_stgc.py options other than -j (highslide path)
     if highslide_path == None:
-        os.system(f'python3 root2html_stgc.py {file}')
+        os.system(f'python3 root2html_stgc.py {file} -t {plot_type}')
     else:
-        os.system(f'python3 root2html_stgc.py {file} -j {highslide_path}')
+        os.system(f'python3 root2html_stgc.py {file} -j {highslide_path} -t {plot_type}')
+
 
 def update_files(files):
-    print('Executing root2html_stgc.py for the following files:')
+    # multiple files are currently not supported; must enter one at a time.
+    # Argument parsing needs to be modified, as getopt does not allow more than one arugment per flag.
+    print('\nExecuting root2html_stgc.py for the following files:\n')
     for file in files:
         print('\t' + file.split("/")[-1])
 
-    confirm = input('Press "Enter" to confirm.')
+    confirm = input('\nPress "Enter" to confirm.')
     if confirm != '':
         print('Exiting program.')
         raise SystemExit
     else:
         for file in files:
-            print(f'\n\n##### {file.split("/")[-1]} #####\n')
+            print(f'\n\n##### {file} #####\n')
             update_file(file)
 
-def update_filetree():
-    os.system('python3 make_filetree.py')
+def update_filetree(plot_type):
+    os.system(f'python3 make_filetree.py -t {plot_type}')
 
 
 if __name__ == '__main__':

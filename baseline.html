@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>sTGC plotter</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
@@ -13,16 +13,6 @@
   <a id="top"></a>
 
   <div id="nav-placeholder"></div>
-
-  <!--<div class="nav">
-      <a href="index.html">Baselines</a>
-      <a href="threshold.html">Threshold</a>
-      <a href="pdo.html">PDO</a>
-      <a href="tdo.html">TDO</a>
-      <a href="old.html">Old</a>
-  </div>-->
-
-  <!--h2>Click <a href="plot_pages/slides_A0_run1_L0.html">here</a> for plot page</h2>-->
 
   <div id="file-tree-div"></div>
 
@@ -51,18 +41,19 @@
     window.h = h; //make h a global variable (required for browser_loader.js)
   </script>
 
-  <script src="JavaScript/browser_loader.js"></script>
+  <!--Following two lines have been moved to the filetree_[type].html files-->
+  <!--<script src="/JavaScript/browser_loader.js"></script>-->
   <!--<script src="JavaScript/dropdown.js"></script>-->
 
-  <script src="JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
+  <script src="/JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
   <script>
     $(function(){
-      $("#nav-placeholder").load("home/nav.html");
-      $("#file-tree-div").load("home/filetree.html");
+      $("#nav-placeholder").load("/html/nav.html");
+      $("#file-tree-div").load("/html/filetree_baseline.html");
     });
   </script>
 
-  <script type="text/javascript">
+  <!--<script type="text/javascript">
     $(function() {
       // this will get the full URL at the address bar
       var url = window.location.href;
@@ -80,7 +71,8 @@
         }
       });
     });
-  </script>
+  </script> -->
+
 
 </body>
 </html>

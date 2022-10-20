@@ -52,6 +52,9 @@ OPTIONS
     -j PATH, --highslide=PATH
         Overrides the default path to highslide.
 
+    -t PLOT TYPE, --type=PLOT TYPE
+        Specifies plot type (baselines, threshold, pdo, tdo) for HTML page. Added for root2html_stgc.py
+
 AUTHORS
     Ryan Reece  <ryan.reece@cern.ch>
     Tae Min Hong  <tmhong@cern.ch>
@@ -91,7 +94,7 @@ dir_of_this_file = os.path.dirname(os.path.abspath( __file__ ))
 
 ## global options
 highslide_path = os.path.join(dir_of_this_file, 'highslide-5.0.0/highslide')
-plot_type = 'baseline'  # specifies plot type (baseline, threshold, pdo, tdo) for loading file tree in HTML
+plot_type = '[plot type unspecified]'  # specifies plot type (baseline, threshold, pdo, tdo) for HTML page
 img_format = 'png' # gif or png
 img_height = 450 # pixels
 thumb_height = 120 # pixels
@@ -105,8 +108,8 @@ def main(argv):
     name_html = True  # assign name to HTML output file using rootfile name (defaults to index.html)
 
     ## parse options
-    _short_options = 'hp:j:'
-    _long_options = ['help', 'pattern=', 'highslide=']
+    _short_options = 'hp:j:t:'
+    _long_options = ['help', 'pattern=', 'highslide=', 'type=']
     try:
         opts, args = getopt.gnu_getopt(argv, _short_options, _long_options)
     except getopt.GetoptError:
@@ -121,6 +124,9 @@ def main(argv):
             pattern = val
         if opt in ('-j', '--highslide'):
             highslide_path = val
+        if opt in ('-t', '--type'):
+            global plot_type
+            plot_type = val
 
     print('  root2html_stgc.py  ----------------------------------------------------')
 
@@ -137,7 +143,7 @@ def main(argv):
         else:
             name = os.path.join(path_wo_ext, 'index.html')
         index = HighSlideRootFileIndex(name)
-        index.write_head(os.path.basename(path))
+        index.write_head(os.path.basename(path), full_path=path)  # 'full_path' argument added for root2html_stgc.py
         n_plots += index.write_root_file(path, pattern)
         index.write_foot()
         index.close()
@@ -160,7 +166,7 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
         self.previous_level = 0
         self.pwd = None
     #__________________________________________________________________________
-    def write_head(self, title, mod=True):
+    def write_head(self, title, mod=True, full_path=None):
         head_template = r"""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -192,6 +198,8 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
         body
         {
             font-family: sans-serif;
+            overflow-x: hidden;
+            overflow-y: scroll;
         }
         h1
         {
@@ -276,13 +284,17 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
 <div id="body">
 """
         if mod:  # adds navigation bar for plots-stgc application to top of page
-            head_template += '<div id="nav-placeholder"></div>'
-            head_template += """    <script src="/JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
+            # For f-string, note that double curly braces are an escape character and only output a single curly brace {
+            head_template += f"""    <div id="nav-placeholder"></div>
+    <script src="/JavaScript/jquery-3.6.0.js" type="text/javascript"></script>
     <script>
-        $(function(){
+        $(function(){{
             $("#nav-placeholder").load("/html/nav.html");
-        });
-    </script><br>"""
+        }});
+    </script>
+    <h2>{plot_type}</h2>
+    <h1>{full_path}</h1>
+    """
         self.write((head_template % {
                 'title' : title,
                 'highslide_path' : self.highslide_path }).encode('utf-8')) # Encode added for Python 3
@@ -340,7 +352,7 @@ class HighSlideRootFileIndex(io.FileIO): # old version: "file):"
                     root_key_path = os.path.join(root_dir_path, key)
                     if pattern and not re.match(pattern, root_key_path):
                         continue
-                    print(os.path.join(dirpath, key))
+                    print(os.path.join(dirpath, key).split(':')[-1])
                     # Include following lines if dir_header is desired at the top of each column:
                     #if mod:
                     #    dir_header = self.write_dir_header(dirpath, mod=True)

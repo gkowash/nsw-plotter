@@ -1,3 +1,5 @@
+// Add click event listeners to file tree menu
+
 var toggler = document.getElementsByClassName("caret");
 var i;
 
@@ -7,6 +9,21 @@ for (i = 0; i < toggler.length; i++) {
     this.classList.toggle("caret-down");
   });
 }
+
+
+// Highlight currently active tab on nav bar
+
+var url = window.location.href;
+
+$(".nav a").each(function() {
+  console.log('URL ', url);
+  console.log('THIS', this.href);
+  // finds nav tab for current window; ".nav a.active" is modified in style.css
+  if (url == this.href) {
+    $(this).addClass("active");
+  }
+});
+
 
 /*
 var coll = document.getElementsByClassName("collapsible");
